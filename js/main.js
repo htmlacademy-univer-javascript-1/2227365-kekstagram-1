@@ -1,4 +1,4 @@
-let getRandomInteger = function(min, max){
+function getRandomInteger(min, max){
   if (min < max || min == max && Number.isInteger(min)) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -7,6 +7,6 @@ let getRandomInteger = function(min, max){
   return 'Wrong range!'
 }
 
-let checkMaxLength = function(string, maxLength){
+function checkMaxLength(string, maxLength){
   return string.length <= maxLength;
 }
