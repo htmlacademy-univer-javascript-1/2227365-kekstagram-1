@@ -81,3 +81,5 @@ const createPhotoDescriptions = (number) => {
   }
   return result;
 };
+
+createPhotoDescriptions(25);
