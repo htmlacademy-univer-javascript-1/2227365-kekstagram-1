@@ -11,22 +11,24 @@ function checkMaxLength(string, maxLength){
   return string.length <= maxLength;
 }
 
+checkMaxLength('abc', 3)
+
 function getNonRepeatingRandoms(min, max, count, prohibited) {
-  let Nums = [];
-  while (Nums.length !== count) {
+  const nums = [];
+  while (nums.length !== count) {
     let newNum = getRandomInteger(min, max);
-    if (!Nums.includes(newNum) && !prohibited.includes(newNum)) {
-      Nums.push(newNum);
+    if (!nums.includes(newNum) && !prohibited.includes(newNum)) {
+      nums.push(newNum);
     }
     else {
-      continue
+      continue;
     }
   }
-  return Nums;
+  return nums;
 }
 
 function createCommentText () {
-  let commentVariants = [
+  const commentVariants = [
     'Всё отлично!',
     'В целом всё неплохо.',
     'Но не всё.',
@@ -36,23 +38,23 @@ function createCommentText () {
     'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
     'Лица у людей на фотке перекошены, как будто их избивают.',
     'Как можно было поймать такой неудачный момент?!',
-  ]
+  ];
   if (getRandomInteger(1, 2) == 1) {
-    return commentVariants[getRandomInteger(0, 8)]
+    return commentVariants[getRandomInteger(0, 8)];
   }
   else {
-    let sentences = getNonRepeatingRandoms(0, 8, 2, [])
-    return commentVariants[sentences[0]] + ' ' + commentVariants[sentences[1]]
+    const sentences = getNonRepeatingRandoms(0, 8, 2, []);
+    return commentVariants[sentences[0]] + ' ' + commentVariants[sentences[1]];
   }
 }
 
-getComments = (usedIds) => {
-  let result = []
-  let names = ['Виталий', 'Артём', 'Вася', 'Дмитрий', 'Джон Доу', 'Иван']
-  let count = getRandomInteger(1, 3);
-  let ids = getNonRepeatingRandoms(1, 20000, count, usedIds)
+let getComments = (usedIds) => {
+  const result = [];
+  const names = ['Виталий', 'Артём', 'Вася', 'Дмитрий', 'Джон Доу', 'Иван'];
+  const count = getRandomInteger(1, 3);
+  const ids = getNonRepeatingRandoms(1, 20000, count, usedIds);
   for (let i = 0; i < ids.length; i++) {
-    usedIds.push(ids[i])
+    usedIds.push(ids[i]);
   }
   for (let i = 0; i < count; i++) {
     result.push({
@@ -63,11 +65,11 @@ getComments = (usedIds) => {
     });
   }
   return result;
-}
+};
 
 const createPhotoDescriptions = (number) => {
-  let usedIds = []
-  let result = []
+  const usedIds = [];
+  const result = [];
   for (let i = 1; i <= number; i++) {
     result.push({
       id: i,
@@ -78,6 +80,6 @@ const createPhotoDescriptions = (number) => {
     });
   }
   return result;
-}
+};
 
-photos = createPhotoDescriptions(25);
+const photos = createPhotoDescriptions(25);
