@@ -11,12 +11,12 @@ function checkMaxLength(string, maxLength){
   return string.length <= maxLength;
 }
 
-checkMaxLength('abc', 3)
+checkMaxLength('abc', 3);
 
 function getNonRepeatingRandoms(min, max, count, prohibited) {
   const nums = [];
   while (nums.length !== count) {
-    let newNum = getRandomInteger(min, max);
+    const newNum = getRandomInteger(min, max);
     if (!nums.includes(newNum) && !prohibited.includes(newNum)) {
       nums.push(newNum);
     }
@@ -39,16 +39,16 @@ function createCommentText () {
     'Лица у людей на фотке перекошены, как будто их избивают.',
     'Как можно было поймать такой неудачный момент?!',
   ];
-  if (getRandomInteger(1, 2) == 1) {
+  if (getRandomInteger(1, 2) === 1) {
     return commentVariants[getRandomInteger(0, 8)];
   }
   else {
     const sentences = getNonRepeatingRandoms(0, 8, 2, []);
-    return commentVariants[sentences[0]] + ' ' + commentVariants[sentences[1]];
+    return '${commentVariants[sentences[0]]} ${commentVariants[sentences[1]]})';
   }
 }
 
-let getComments = (usedIds) => {
+const getComments = (usedIds) => {
   const result = [];
   const names = ['Виталий', 'Артём', 'Вася', 'Дмитрий', 'Джон Доу', 'Иван'];
   const count = getRandomInteger(1, 3);
@@ -59,7 +59,7 @@ let getComments = (usedIds) => {
   for (let i = 0; i < count; i++) {
     result.push({
       id: ids[i],
-      avatar: 'img/avatar-' + getRandomInteger(1, 6) + '.svg',
+      avatar: 'img/avatar-${getRandomInteger(1, 6)}.svg',
       message: createCommentText(),
       name: names[getRandomInteger(0, names.length - 1)]
     });
@@ -73,7 +73,7 @@ const createPhotoDescriptions = (number) => {
   for (let i = 1; i <= number; i++) {
     result.push({
       id: i,
-      url: 'photos/' + i + '.jpg',
+      url: 'photos/${i}.jpg',
       description: 'Заглушка',
       likes: getRandomInteger(15, 200),
       comments: getComments(usedIds)
@@ -81,5 +81,3 @@ const createPhotoDescriptions = (number) => {
   }
   return result;
 };
-
-const photos = createPhotoDescriptions(25);
