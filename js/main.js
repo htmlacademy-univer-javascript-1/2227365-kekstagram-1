@@ -44,7 +44,7 @@ function createCommentText () {
   }
   else {
     const sentences = getNonRepeatingRandoms(0, 8, 2, []);
-    return '${commentVariants[sentences[0]]} ${commentVariants[sentences[1]]})';
+    return `${commentVariants[sentences[0]]} ${commentVariants[sentences[1]]})`;
   }
 }
 
@@ -59,7 +59,7 @@ const getComments = (usedIds) => {
   for (let i = 0; i < count; i++) {
     result.push({
       id: ids[i],
-      avatar: 'img/avatar-${getRandomInteger(1, 6)}.svg',
+      avatar: `img/avatar-${getRandomInteger(1, 6)}.svg`,
       message: createCommentText(),
       name: names[getRandomInteger(0, names.length - 1)]
     });
@@ -73,7 +73,7 @@ const createPhotoDescriptions = (number) => {
   for (let i = 1; i <= number; i++) {
     result.push({
       id: i,
-      url: 'photos/${i}.jpg',
+      url: `photos/${i}.jpg`,
       description: 'Заглушка',
       likes: getRandomInteger(15, 200),
       comments: getComments(usedIds)
