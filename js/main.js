@@ -1,3 +1,17 @@
+const commentVariants = [
+  'Всё отлично!',
+  'В целом всё неплохо.',
+  'Но не всё.',
+  'Когда вы делаете фотографию, хорошо бы убирать палец из кадра.',
+  'В конце концов это просто непрофессионально.',
+  'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
+  'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
+  'Лица у людей на фотке перекошены, как будто их избивают.',
+  'Как можно было поймать такой неудачный момент?!',
+];
+const names = ['Виталий', 'Артём', 'Вася', 'Дмитрий', 'Джон Доу', 'Иван'];
+const descriptions = ['Фото', 'Фото. Ну типа.', 'Потом придумаю', 'Шедевр'];
+
 function getRandomInteger(min, max){
   if (min < max || min === max && Number.isInteger(min)) {
     min = Math.ceil(min);
@@ -28,38 +42,31 @@ function getNonRepeatingRandoms(min, max, count, prohibited) {
 }
 
 function createCommentText () {
-  const commentVariants = [
-    'Всё отлично!',
-    'В целом всё неплохо.',
-    'Но не всё.',
-    'Когда вы делаете фотографию, хорошо бы убирать палец из кадра.',
-    'В конце концов это просто непрофессионально.',
-    'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
-    'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
-    'Лица у людей на фотке перекошены, как будто их избивают.',
-    'Как можно было поймать такой неудачный момент?!',
-  ];
-  if (getRandomInteger(1, 2) === 1) {
-    return commentVariants[getRandomInteger(0, 8)];
+  const sentencesCountRange = {min: 1, max: 2};
+  const sentencesCount = getRandomInteger(sentencesCountRange.min, sentencesCountRange.max);
+  const chosenSentencesIndexes = getNonRepeatingRandoms(0, commentVariants.length - 1, sentencesCount, []);
+  let result = '';
+  for (let i = 0; i < sentencesCount; i++)
+  {
+    result += commentVariants[chosenSentencesIndexes[i]];
   }
-  else {
-    const sentences = getNonRepeatingRandoms(0, 8, 2, []);
-    return `${commentVariants[sentences[0]]} ${commentVariants[sentences[1]]})`;
-  }
+  return result;
 }
 
-const getComments = (usedIds) => {
+const createComments = (usedIds) => {
+  const commentsCountRange = {min: 1, max: 3};
+  const commentIdRange = {min: 1, max: 20000};
+  const avatarIdRange = {min: 1, max: 6};
   const result = [];
-  const names = ['Виталий', 'Артём', 'Вася', 'Дмитрий', 'Джон Доу', 'Иван'];
-  const count = getRandomInteger(1, 3);
-  const ids = getNonRepeatingRandoms(1, 20000, count, usedIds);
+  const count = getRandomInteger(commentsCountRange.min, commentsCountRange.max);
+  const ids = getNonRepeatingRandoms(commentIdRange.min, commentIdRange.max, count, usedIds);
   for (let i = 0; i < ids.length; i++) {
     usedIds.push(ids[i]);
   }
   for (let i = 0; i < count; i++) {
     result.push({
       id: ids[i],
-      avatar: `img/avatar-${getRandomInteger(1, 6)}.svg`,
+      avatar: `img/avatar-${getRandomInteger(avatarIdRange.min, avatarIdRange.max)}.svg`,
       message: createCommentText(),
       name: names[getRandomInteger(0, names.length - 1)]
     });
@@ -68,18 +75,21 @@ const getComments = (usedIds) => {
 };
 
 const createPhotoDescriptions = (number) => {
+  const likesRange = {min: 15, max: 200};
   const usedIds = [];
   const result = [];
   for (let i = 1; i <= number; i++) {
     result.push({
       id: i,
       url: `photos/${i}.jpg`,
-      description: 'Заглушка',
-      likes: getRandomInteger(15, 200),
-      comments: getComments(usedIds)
+      description: descriptions[getRandomInteger(0, descriptions.length - 1)],
+      likes: getRandomInteger(likesRange.min, likesRange.max),
+      comments: createComments(usedIds)
     });
   }
   return result;
 };
 
-createPhotoDescriptions(25);
+const photoDescriptionCount = 25;
+createPhotoDescriptions(photoDescriptionCount);
+
