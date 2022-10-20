@@ -1,4 +1,5 @@
-import { photoDescriptionCount } from './generation-config.js';
+import { PHOTO_DESCRIPTION_COUNT } from './generation-config.js';
 import { createPhotoDescriptions } from './generation.js';
 
-createPhotoDescriptions(photoDescriptionCount);
+createPhotoDescriptions(PHOTO_DESCRIPTION_COUNT);
+
