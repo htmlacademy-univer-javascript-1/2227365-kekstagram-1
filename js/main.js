@@ -4,4 +4,3 @@ import { renderThumbnails } from './thumbnails-render.js';
 
 const photoDescriptions = createPhotoDescriptions(PHOTO_DESCRIPTION_COUNT);
 renderThumbnails(photoDescriptions);
-

@@ -1,14 +1,39 @@
+import { renderBigPicture } from './big-picture-render.js';
+
 const template = document.querySelector('#picture')
   .content
   .querySelector('.picture');
 
 
-const createThumbnail = function(description) {
+const createThumbnail = function(photoInfo) {
   const picture = template.cloneNode(true);
-  picture.querySelector('.picture__img').src = description.url;
-  const info = picture.querySelector('.picture__info');
-  info.querySelector('.picture__likes').textContent = description.likes;
-  info.querySelector('.picture__comments').textContent = description.comments.length;
+  picture.querySelector('.picture__img').src = photoInfo.url;
+  picture.querySelector('.picture__img').alt = photoInfo.description;
+  const likes = picture.querySelector('.picture__likes');
+  const commentsCount = picture.querySelector('.picture__comments');
+  likes.textContent = photoInfo.likes;
+  commentsCount.textContent = photoInfo.comments.length;
+  const LikeStatus = (function() {
+    let isLiked = false;
+    function switchLike() {
+      if (isLiked) {
+        isLiked = false;
+      }
+      else {
+        isLiked = true;
+      }
+    }
+    return {
+      switchLike: () => {
+        switchLike();
+      },
+      value: () => isLiked
+    };
+  });
+  const likeStatus = LikeStatus();
+  picture.onclick = function() {
+    renderBigPicture(photoInfo, likes, likeStatus);
+  };
   return picture;
 };
 

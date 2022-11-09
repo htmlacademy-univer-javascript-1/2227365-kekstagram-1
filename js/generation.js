@@ -16,6 +16,9 @@ function createCommentText () {
   let result = '';
   for (let i = 0; i < sentencesCount; i++)
   {
+    if (i > 0) {
+      result += ' ';
+    }
     result += COMMENT_VARIANTS[chosenSentencesIndexes[i]];
   }
   return result;
