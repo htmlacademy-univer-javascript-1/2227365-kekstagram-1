@@ -3,6 +3,7 @@ import { renderBigPicture } from './big-picture-render.js';
 const template = document.querySelector('#picture')
   .content
   .querySelector('.picture');
+const thumbnailsBlock = document.querySelector('.pictures');
 
 
 const createThumbnail = function(photoInfo) {
@@ -13,37 +14,30 @@ const createThumbnail = function(photoInfo) {
   const commentsCount = picture.querySelector('.picture__comments');
   likes.textContent = photoInfo.likes;
   commentsCount.textContent = photoInfo.comments.length;
-  const LikeStatus = (function() {
-    let isLiked = false;
-    function switchLike() {
-      if (isLiked) {
-        isLiked = false;
-      }
-      else {
-        isLiked = true;
-      }
-    }
-    return {
-      switchLike: () => {
-        switchLike();
-      },
-      value: () => isLiked
-    };
-  });
-  const likeStatus = LikeStatus();
-  picture.onclick = function() {
-    renderBigPicture(photoInfo, likes, likeStatus);
-  };
   return picture;
 };
 
+const thumbnailDict = new Map();
+
 const renderThumbnails = function(descriptions) {
-  const thumbnailsBlock = document.querySelector('.pictures');
   const thumbnailsFragment = document.createDocumentFragment();
   descriptions.forEach((description) => {
-    thumbnailsFragment.appendChild(createThumbnail(description));
+    const thumbnail = createThumbnail(description);
+    thumbnailDict.set(thumbnail, description);
+    thumbnailsFragment.appendChild(thumbnail);
   });
   thumbnailsBlock.appendChild(thumbnailsFragment);
 };
+
+thumbnailsBlock.addEventListener('click', (evt) => {
+  const thumbnail = evt.target.closest('a');
+  if (!thumbnail) {
+    return;
+  }
+  if (!thumbnailsBlock.contains(thumbnail)) {
+    return;
+  }
+  renderBigPicture(thumbnailDict.get(thumbnail));
+});
 
 export {renderThumbnails};

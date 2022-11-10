@@ -27,54 +27,54 @@ const description = picture.querySelector('.social__caption');
 const commentsCount = picture.querySelector('.comments-count');
 const closeButton = picture.querySelector('.big-picture__cancel');
 
-const renderBigPicture = function (photoInfo, thumbnailLikes, likeStatus) {
+const openBigPicture = function () {
   pictureBlock.classList.remove('hidden');
   body.classList.add('modal-open');
+};
 
+const fillModal = function (photoInfo) {
   image.src = photoInfo.url;
   image.alt = photoInfo.description;
   description.textContent = photoInfo.description;
   likes.textContent = photoInfo.likes;
   commentsCount.textContent = photoInfo.comments.length;
-
-  picture.querySelector('.social__comment-count').classList.add('hidden');
-  picture.querySelector('.comments-loader').classList.add('hidden');
-
   comments.innerHTML = '';
   photoInfo.comments.forEach((comment) => {
     comments.appendChild(prepareComment(comment));
   });
+};
 
-  closeButton.addEventListener('click', (evt) => {
-    evt.preventDefault();
-    body.classList.remove('modal-open');
-    pictureBlock.classList.add('hidden');
-  });
+let escListener = null;
+let closeButtonListener = null;
 
-  document.addEventListener('keydown', (evt) => {
-    if (evt.key === 'Escape') {
-      body.classList.remove('modal-open');
-      pictureBlock.classList.add('hidden');
-    }
-  });
+const closeBigPicture = function () {
+  body.classList.remove('modal-open');
+  pictureBlock.classList.add('hidden');
+  closeButton.removeEventListener('click', closeButtonListener);
+  document.removeEventListener('keydown', escListener);
+};
 
-  const likeListener = () => {
-    if (!likeStatus.value()) {
-      photoInfo.likes += 1;
-      likeStatus.switchLike();
-    }
-    else {
-      photoInfo.likes -= 1;
-      likeStatus.switchLike();
-    }
-    likes.textContent = photoInfo.likes;
-    thumbnailLikes.textContent = photoInfo.likes;
-  };
-
-  if (typeof likes.onclick === 'function') {
-    likes.removeAttribute('onclick');
+escListener = function (evt) {
+  if (evt.key === 'Escape') {
+    closeBigPicture();
   }
-  likes.onclick = likeListener;
+};
+
+closeButtonListener = function (evt) {
+  evt.preventDefault();
+  closeBigPicture();
+};
+
+const renderBigPicture = function (photoInfo) {
+  openBigPicture();
+
+  fillModal(photoInfo);
+
+  picture.querySelector('.social__comment-count').classList.add('hidden');
+  picture.querySelector('.comments-loader').classList.add('hidden');
+
+  closeButton.addEventListener('click', closeButtonListener);
+  document.addEventListener('keydown', escListener);
 };
 
 export{renderBigPicture};
