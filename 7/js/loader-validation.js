@@ -20,11 +20,14 @@ const validateHashtags = (value) => {
   if (value === '') {
     return true;
   }
-  const hashtags = value.split(' ');
+  const hashtags = value.toLowerCase().split(' ');
   if (hashtags.length > 5) {
     return false;
   }
 
+  if (hashtags.length !== [... new Set(hashtags)].length) {
+    return false;
+  }
   const re = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
   hashtags.forEach((hashtag) => {
     if (!re.test(hashtag)) {
@@ -43,7 +46,7 @@ pristine.addValidator(
 pristine.addValidator(
   textHashtagsInput,
   validateHashtags,
-  'Верный формат: #hashtag (не более 20 симв.), хэштеги разделены пробелами, не более 5 хэштегов'
+  'Верный формат: #hashtag (не более 20 симв.), хэштеги разделены пробелами, не более 5 хэштегов, без повторений'
 );
 
 export {pristine};
