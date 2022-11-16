@@ -25,6 +25,21 @@ function getNonRepeatingRandoms(min, max, count, prohibited) {
   return nums;
 }
 
+function openModal(modal, parent) {
+  modal.classList.remove('hidden');
+  parent.classList.add('modal-open');
+}
+
+function  closeModal(modal, parent) {
+  modal.classList.add('hidden');
+  parent.classList.remove('modal-open');
+}
+
 checkMaxLength('abc', 3);
 
-export {getRandomInteger, getNonRepeatingRandoms};
+export {
+  getRandomInteger,
+  getNonRepeatingRandoms,
+  openModal,
+  closeModal
+};

@@ -1,3 +1,5 @@
+import {openModal, closeModal} from './util.js';
+
 const prepareComment = function (commentInfo) {
   const comment = document.createElement('li');
   comment.classList.add('social__comment');
@@ -27,11 +29,6 @@ const description = picture.querySelector('.social__caption');
 const commentsCount = picture.querySelector('.comments-count');
 const closeButton = picture.querySelector('.big-picture__cancel');
 
-const openBigPicture = function () {
-  pictureBlock.classList.remove('hidden');
-  body.classList.add('modal-open');
-};
-
 const fillModal = function (photoInfo) {
   image.src = photoInfo.url;
   image.alt = photoInfo.description;
@@ -48,8 +45,7 @@ let escListener = null;
 let closeButtonListener = null;
 
 const closeBigPicture = function () {
-  body.classList.remove('modal-open');
-  pictureBlock.classList.add('hidden');
+  closeModal(pictureBlock, body);
   closeButton.removeEventListener('click', closeButtonListener);
   document.removeEventListener('keydown', escListener);
 };
@@ -66,8 +62,7 @@ closeButtonListener = function (evt) {
 };
 
 const renderBigPicture = function (photoInfo) {
-  openBigPicture();
-
+  openModal(pictureBlock, body);
   fillModal(photoInfo);
 
   picture.querySelector('.social__comment-count').classList.add('hidden');
