@@ -9,11 +9,6 @@ const closeButton = imgUploadForm.querySelector('.img-upload__cancel');
 const textHashtagsInput = imgUploadForm.querySelector('.text__hashtags');
 const textDescriptionInput = imgUploadForm.querySelector('.text__description');
 
-let escListener = null;
-let closeButtonListener = null;
-let submitListener = null;
-let propagationStopper = null;
-
 const closeOverlay = () => {
   closeModal(imgUploadOverlay, body);
   closeButton.removeEventListener('click', closeButtonListener);
@@ -22,29 +17,20 @@ const closeOverlay = () => {
   textDescriptionInput.removeEventListener('keydown', propagationStopper);
 };
 
-propagationStopper = (evt) => {
+function propagationStopper(evt) {
   evt.stopPropagation();
-};
+}
 
-closeButtonListener = function () {
+function closeButtonListener() {
   closeOverlay();
-};
+}
 
-escListener = function (evt) {
+function escListener(evt) {
   if (evt.key === 'Escape') {
     imgUploadForm.reset();
     closeOverlay();
   }
-};
-
-submitListener = function (evt) {
-  {
-    evt.preventDefault();
-    if (pristine.validate()) {
-      imgUploadForm.submit();
-    }
-  }
-};
+}
 
 const renderImageEditor = () => {
   openModal(imgUploadOverlay, body);
@@ -52,8 +38,14 @@ const renderImageEditor = () => {
   textDescriptionInput.addEventListener('keydown', propagationStopper);
   closeButton.addEventListener('click', closeButtonListener);
   document.addEventListener('keydown', escListener);
-  imgUploadForm.addEventListener('submit', submitListener);
 };
+
+imgUploadForm.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  if (pristine.validate()) {
+    imgUploadForm.submit();
+  }
+});
 
 uploadFile.addEventListener('change', (evt) => {
   evt.preventDefault();
