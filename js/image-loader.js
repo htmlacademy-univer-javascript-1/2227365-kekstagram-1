@@ -59,12 +59,3 @@ uploadFile.addEventListener('change', (evt) => {
   evt.preventDefault();
   renderImageEditor();
 });
-
-textHashtagsInput.addEventListener('keydown', (evt) => {
-  evt.stopPropagation();
-});
-
-textDescriptionInput.addEventListener('keydown', (evt) => {
-  evt.stopPropagation();
-});
-
