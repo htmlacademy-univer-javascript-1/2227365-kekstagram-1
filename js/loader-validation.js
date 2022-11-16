@@ -1,3 +1,8 @@
+import {checkMaxLength} from './util.js';
+const MAX_DESCRIPTION_LENGTH = 140;
+const MAX_HASHTAG_LENGTH = 5;
+const REGEX = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
+
 const imgUploadForm = document.querySelector('.img-upload__form');
 const textHashtagsInput = imgUploadForm.querySelector('.text__hashtags');
 const textDescriptionInput = imgUploadForm.querySelector('.text__description');
@@ -11,30 +16,22 @@ const pristine = new Pristine(imgUploadForm, {
   errorTextClass: 'form__error'
 });
 
-const validateDescription = function (value) {
-  return value.length <= 140;
+const validateDescription = (value) => checkMaxLength(value, MAX_DESCRIPTION_LENGTH);
+
+const validateHashtagLength = (value) => value.split(' ').length <= MAX_HASHTAG_LENGTH;
+
+const validateHashtagUninqueness = (value) => {
+  const hashtags = value.toLowerCase().split(' ');
+  return hashtags.length === new Set(hashtags).size;
 };
 
-const validateHashtags = (value) => {
-  let correct = true;
+const validateHashtagFormat = (value) => {
   if (value === '') {
     return true;
   }
-  const hashtags = value.toLowerCase().split(' ');
-  if (hashtags.length > 5) {
-    return false;
+  else {
+    return value.split(' ').every((hashtag) => REGEX.test(hashtag));
   }
-
-  if (hashtags.length !== [... new Set(hashtags)].length) {
-    return false;
-  }
-  const re = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
-  hashtags.forEach((hashtag) => {
-    if (!re.test(hashtag)) {
-      correct = false;
-    }
-  });
-  return correct;
 };
 
 pristine.addValidator(
@@ -45,8 +42,20 @@ pristine.addValidator(
 
 pristine.addValidator(
   textHashtagsInput,
-  validateHashtags,
-  'Верный формат: #hashtag (не более 20 симв.), хэштеги разделены пробелами, не более 5 хэштегов, без повторений'
+  validateHashtagLength,
+  'Не больше 5 хэштегов'
+);
+
+pristine.addValidator(
+  textHashtagsInput,
+  validateHashtagUninqueness,
+  'Хэштеги не должны повторяться'
+);
+
+pristine.addValidator(
+  textHashtagsInput,
+  validateHashtagFormat,
+  'Формат: #hashtag, длина не больше 20 символов, хэштеги разделены пробелами'
 );
 
 export {pristine};

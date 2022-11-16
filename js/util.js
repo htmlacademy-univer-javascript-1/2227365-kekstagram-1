@@ -41,5 +41,6 @@ export {
   getRandomInteger,
   getNonRepeatingRandoms,
   openModal,
-  closeModal
+  closeModal,
+  checkMaxLength
 };
