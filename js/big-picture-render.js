@@ -1,6 +1,6 @@
 import {openModal, closeModal} from './util.js';
 
-const prepareComment = function (commentInfo) {
+const prepareComment = (commentInfo) => {
   const comment = document.createElement('li');
   comment.classList.add('social__comment');
 
@@ -29,7 +29,7 @@ const description = picture.querySelector('.social__caption');
 const commentsCount = picture.querySelector('.comments-count');
 const closeButton = picture.querySelector('.big-picture__cancel');
 
-const fillModal = function (photoInfo) {
+const fillModal = (photoInfo) => {
   image.src = photoInfo.url;
   image.alt = photoInfo.description;
   description.textContent = photoInfo.description;
@@ -41,27 +41,24 @@ const fillModal = function (photoInfo) {
   });
 };
 
-let escListener = null;
-let closeButtonListener = null;
-
-const closeBigPicture = function () {
+const closeBigPicture = () => {
   closeModal(pictureBlock, body);
   closeButton.removeEventListener('click', closeButtonListener);
   document.removeEventListener('keydown', escListener);
 };
 
-escListener = function (evt) {
+function escListener(evt) {
   if (evt.key === 'Escape') {
     closeBigPicture();
   }
-};
+}
 
-closeButtonListener = function (evt) {
+function closeButtonListener(evt) {
   evt.preventDefault();
   closeBigPicture();
-};
+}
 
-const renderBigPicture = function (photoInfo) {
+const renderBigPicture = (photoInfo) => {
   openModal(pictureBlock, body);
   fillModal(photoInfo);
 
