@@ -1,4 +1,6 @@
-const prepareComment = function (commentInfo) {
+import {openModal, closeModal} from './util.js';
+
+const prepareComment = (commentInfo) => {
   const comment = document.createElement('li');
   comment.classList.add('social__comment');
 
@@ -27,12 +29,7 @@ const description = picture.querySelector('.social__caption');
 const commentsCount = picture.querySelector('.comments-count');
 const closeButton = picture.querySelector('.big-picture__cancel');
 
-const openBigPicture = function () {
-  pictureBlock.classList.remove('hidden');
-  body.classList.add('modal-open');
-};
-
-const fillModal = function (photoInfo) {
+const fillModal = (photoInfo) => {
   image.src = photoInfo.url;
   image.alt = photoInfo.description;
   description.textContent = photoInfo.description;
@@ -44,30 +41,25 @@ const fillModal = function (photoInfo) {
   });
 };
 
-let escListener = null;
-let closeButtonListener = null;
-
-const closeBigPicture = function () {
-  body.classList.remove('modal-open');
-  pictureBlock.classList.add('hidden');
+const closeBigPicture = () => {
+  closeModal(pictureBlock, body);
   closeButton.removeEventListener('click', closeButtonListener);
   document.removeEventListener('keydown', escListener);
 };
 
-escListener = function (evt) {
+function escListener(evt) {
   if (evt.key === 'Escape') {
     closeBigPicture();
   }
-};
+}
 
-closeButtonListener = function (evt) {
+function closeButtonListener(evt) {
   evt.preventDefault();
   closeBigPicture();
-};
+}
 
-const renderBigPicture = function (photoInfo) {
-  openBigPicture();
-
+const renderBigPicture = (photoInfo) => {
+  openModal(pictureBlock, body);
   fillModal(photoInfo);
 
   picture.querySelector('.social__comment-count').classList.add('hidden');

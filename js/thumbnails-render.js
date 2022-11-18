@@ -6,7 +6,7 @@ const template = document.querySelector('#picture')
 const thumbnailsBlock = document.querySelector('.pictures');
 
 
-const createThumbnail = function(photoInfo) {
+const createThumbnail = (photoInfo) => {
   const picture = template.cloneNode(true);
   picture.querySelector('.picture__img').src = photoInfo.url;
   picture.querySelector('.picture__img').alt = photoInfo.description;
@@ -19,7 +19,7 @@ const createThumbnail = function(photoInfo) {
 
 const thumbnailDict = new Map();
 
-const renderThumbnails = function(descriptions) {
+const renderThumbnails = (descriptions) => {
   const thumbnailsFragment = document.createDocumentFragment();
   descriptions.forEach((description) => {
     const thumbnail = createThumbnail(description);
