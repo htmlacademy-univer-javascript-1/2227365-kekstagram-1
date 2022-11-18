@@ -1,5 +1,22 @@
 import {openModal, closeModal} from './util.js';
 
+const COMMENTS_PER_LOAD = 5;
+
+const pictureBlock = document.querySelector('.big-picture');
+const body = document.querySelector('body');
+const picture = pictureBlock.querySelector('.big-picture__preview');
+const image = picture.querySelector('.big-picture__img').querySelector('img');
+const likes = picture.querySelector('.likes-count');
+const shownCount = picture.querySelector('.shown-count');
+const commentsLoader = picture.querySelector('.comments-loader');
+const comments = picture.querySelector('.social__comments');
+const description = picture.querySelector('.social__caption');
+const commentsCount = picture.querySelector('.comments-count');
+const closeButton = picture.querySelector('.big-picture__cancel');
+
+let shownCommentsCount = 0;
+let loaderListener = null;
+
 const prepareComment = (commentInfo) => {
   const comment = document.createElement('li');
   comment.classList.add('social__comment');
@@ -19,15 +36,18 @@ const prepareComment = (commentInfo) => {
   return comment;
 };
 
-const pictureBlock = document.querySelector('.big-picture');
-const body = document.querySelector('body');
-const picture = pictureBlock.querySelector('.big-picture__preview');
-const image = picture.querySelector('.big-picture__img').querySelector('img');
-const likes = picture.querySelector('.likes-count');
-const comments = picture.querySelector('.social__comments');
-const description = picture.querySelector('.social__caption');
-const commentsCount = picture.querySelector('.comments-count');
-const closeButton = picture.querySelector('.big-picture__cancel');
+const showNComments = (number, commentObjs) => {
+  const hiddenCount = commentObjs.length - shownCommentsCount;
+  const toShowCount = hiddenCount >= number ? number : hiddenCount;
+  for (let i = shownCommentsCount; i < shownCommentsCount + toShowCount; i++) {
+    comments.appendChild(prepareComment(commentObjs[i]));
+  }
+  shownCommentsCount += toShowCount;
+  if ((shownCommentsCount === commentObjs.length) !== commentsLoader.classList.contains('hidden')) {
+    commentsLoader.classList.toggle('hidden');
+  }
+  shownCount.textContent = shownCommentsCount;
+};
 
 const fillModal = (photoInfo) => {
   image.src = photoInfo.url;
@@ -36,13 +56,13 @@ const fillModal = (photoInfo) => {
   likes.textContent = photoInfo.likes;
   commentsCount.textContent = photoInfo.comments.length;
   comments.innerHTML = '';
-  photoInfo.comments.forEach((comment) => {
-    comments.appendChild(prepareComment(comment));
-  });
+  showNComments(COMMENTS_PER_LOAD, photoInfo.comments);
 };
 
 const closeBigPicture = () => {
   closeModal(pictureBlock, body);
+  shownCommentsCount = 0;
+  commentsLoader.removeEventListener('click', loaderListener);
   closeButton.removeEventListener('click', closeButtonListener);
   document.removeEventListener('keydown', escListener);
 };
@@ -59,12 +79,15 @@ function closeButtonListener(evt) {
 }
 
 const renderBigPicture = (photoInfo) => {
+  loaderListener = (evt) => {
+    evt.preventDefault();
+    showNComments(COMMENTS_PER_LOAD, photoInfo.comments);
+  };
+
   openModal(pictureBlock, body);
   fillModal(photoInfo);
 
-  picture.querySelector('.social__comment-count').classList.add('hidden');
-  picture.querySelector('.comments-loader').classList.add('hidden');
-
+  commentsLoader.addEventListener('click', loaderListener);
   closeButton.addEventListener('click', closeButtonListener);
   document.addEventListener('keydown', escListener);
 };
