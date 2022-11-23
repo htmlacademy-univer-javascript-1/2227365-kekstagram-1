@@ -1,5 +1,6 @@
 import {openModal, closeModal} from './util.js';
 import {pristine} from './loader-validation.js';
+import { enableScaleChanger, disnableScaleChanger, enableEffectPreview, disableEffectPreview} from './photo-editor.js';
 
 const body = document.querySelector('body');
 const imgUploadForm = document.querySelector('.img-upload__form');
@@ -15,6 +16,8 @@ const closeOverlay = () => {
   document.removeEventListener('keydown', escListener);
   textHashtagsInput.removeEventListener('keydown', propagationStopper);
   textDescriptionInput.removeEventListener('keydown', propagationStopper);
+  disableEffectPreview();
+  disnableScaleChanger();
 };
 
 function propagationStopper(evt) {
@@ -38,6 +41,8 @@ const renderImageEditor = () => {
   textDescriptionInput.addEventListener('keydown', propagationStopper);
   closeButton.addEventListener('click', closeButtonListener);
   document.addEventListener('keydown', escListener);
+  enableEffectPreview();
+  enableScaleChanger();
 };
 
 imgUploadForm.addEventListener('submit', (evt) => {
