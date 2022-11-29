@@ -7,7 +7,7 @@ const SCALE_CHANGE_STEP = 0.25;
 const INITIAL_EFFECT = 'none';
 
 const imgUploadForm = document.querySelector('.img-upload__form');
-const picture = imgUploadForm.querySelector('.img-upload__preview');
+const picture = imgUploadForm.querySelector('.img-upload__preview img');
 const scaleControlBlock = imgUploadForm.querySelector('.img-upload__scale');
 const scaleControl = {
   block: scaleControlBlock,
