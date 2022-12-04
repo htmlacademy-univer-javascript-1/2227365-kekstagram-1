@@ -40,4 +40,11 @@ thumbnailsBlock.addEventListener('click', (evt) => {
   renderBigPicture(thumbnailDict.get(thumbnail));
 });
 
-export {renderThumbnails};
+const renderLoadError = (message) => {
+  const error = document.createElement('div');
+  error.classList.add('error-load');
+  error.textContent = message;
+  thumbnailsBlock.appendChild(error);
+};
+
+export {renderThumbnails, renderLoadError};

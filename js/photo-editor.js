@@ -60,7 +60,6 @@ const enableScaleChanger = () => {
 
 const disnableScaleChanger = () => {
   scaleControl.block.removeEventListener('click', scaleControlListener);
-  scaleControl.scale = INITIAL_SCALE_VALUE;
 };
 
 const effectRadiosListener = () => {
@@ -77,15 +76,24 @@ const effectRadiosListener = () => {
 const enableEffectPreview = () => {
   effectsList.addEventListener('click', effectRadiosListener);
   createEffectSlider();
+  changeEffect(currentEffect);
+  effectLevelSlider.noUiSlider.set(parseFloat(effectLevelValue.value));
   effectLevelSlider.noUiSlider.on('update', sliderConnector);
-  effectLevelSlider.classList.add('hidden');
+  if (currentEffect === 'none') {
+    effectLevelSlider.classList.add('hidden');
+  }
 };
 
 const disableEffectPreview = () => {
   picture.classList.remove(`effects__preview--${currentEffect}`);
-  currentEffect = INITIAL_EFFECT;
   effectsList.removeEventListener('click', effectRadiosListener);
   effectLevelSlider.noUiSlider.destroy();
+};
+
+const resetEffect = () => {
+  scaleControl.scale = INITIAL_SCALE_VALUE;
+  currentEffect = INITIAL_EFFECT;
+  imgUploadForm.reset();
 };
 
 export {
@@ -96,5 +104,6 @@ export {
   effectLevelSlider,
   effectLevelValue,
   picture,
-  currentEffect
+  currentEffect,
+  resetEffect
 };
