@@ -1335,6 +1335,11 @@ main {
           transform: translateX(-50%);
 }
 
+.error-load{
+  background-color: red;
+  text-align: center;
+}
+
 
 /* Адаптивности чуток
    ========================================================================== */
