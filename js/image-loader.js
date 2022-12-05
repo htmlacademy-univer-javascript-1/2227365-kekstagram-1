@@ -1,7 +1,9 @@
 import {openModal, closeModal} from './util.js';
 import {pristine} from './loader-validation.js';
 import { sendData } from './api.js';
-import { enableScaleChanger, disnableScaleChanger, enableEffectPreview, disableEffectPreview, resetEffect} from './photo-editor.js';
+import { picture, enableScaleChanger, disnableScaleChanger, enableEffectPreview, disableEffectPreview, resetEffect} from './photo-editor.js';
+
+const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 
 const body = document.querySelector('body');
 const imgUploadForm = document.querySelector('.img-upload__form');
@@ -126,5 +128,13 @@ imgUploadForm.addEventListener('submit', (evt) => {
 
 uploadFile.addEventListener('change', (evt) => {
   evt.preventDefault();
-  renderImageEditor();
+  const file = uploadFile.files[0];
+  const fileName = file.name.toLowerCase();
+  if (FILE_TYPES.some((type) => fileName.endsWith(type))) {
+    picture.src = URL.createObjectURL(file);
+    renderImageEditor();
+  }
+  else {
+    showLoadError();
+  }
 });
