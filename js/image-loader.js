@@ -35,7 +35,7 @@ const blockSubmitButton = () => {
 };
 
 const unBlockSubmitButton = () => {
-  uploadSubmitButton.removeAttribute('disabled', 'disabled');
+  uploadSubmitButton.removeAttribute('disabled');
 };
 
 const showLoadError = () => {

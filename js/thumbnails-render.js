@@ -11,22 +11,18 @@ const imgFilters = document.querySelector('.img-filters');
 const compareByComments = (photoA, photoB) => photoB.comments.length - photoA.comments.length;
 
 const filters = {
-  filterDefault: (photos) => photos,
-  filterRandom: (photos) => {
+  'filter-default': (photos) => photos,
+  'filter-random': (photos) => {
     const result = [];
-    let numbers = [];
-    if (photos.length >= 10) {
-      numbers = getNonRepeatingRandoms(0, photos.length - 1, RANDOM_PHOTOS_COUNT, []);
-    }
-    else {
-      numbers = getNonRepeatingRandoms(0, photos.length - 1, photos.length, []);
-    }
+    const numbers = (photos.length >= RANDOM_PHOTOS_COUNT)
+      ? getNonRepeatingRandoms(0, photos.length - 1, RANDOM_PHOTOS_COUNT, [])
+      : getNonRepeatingRandoms(0, photos.length - 1, photos.length, []);
     numbers.forEach((number) => {
       result.push(photos[number]);
     });
     return result;
   },
-  filterDiscussed: (photos) => photos.sort(compareByComments)
+  'filter-discussed': (photos) => photos.sort(compareByComments)
 };
 
 const createThumbnail = (photoInfo) => {
@@ -55,8 +51,7 @@ const renderThumbnails = (descriptions) => {
   clearThumbnails();
   const filter = imgFilters
     .querySelector('.img-filters__button--active')
-    .id
-    .replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+    .id;
   const thumbnailsFragment = document.createDocumentFragment();
   filters[filter](descriptions.slice())
     .forEach((description) => {
