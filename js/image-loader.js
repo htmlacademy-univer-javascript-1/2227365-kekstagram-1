@@ -26,6 +26,7 @@ const closeOverlay = () => {
   document.removeEventListener('keydown', escHandler);
   textHashtagsInput.removeEventListener('keydown', fieldKeydownHandler);
   textDescriptionInput.removeEventListener('keydown', fieldKeydownHandler);
+  imgUploadForm.removeEventListener('submit', formSubmitHandler);
   disableEffectPreview();
   disnableScaleChanger();
 };
@@ -42,17 +43,19 @@ const showLoadError = () => {
   const message = errorTemplate.cloneNode(true);
   body.appendChild(message);
   document.addEventListener('keydown', documentKeydownHandler);
+  message.addEventListener('click', alertClickHandler);
   const closeMessage = () => {
     message.remove();
     document.removeEventListener('keydown', documentKeydownHandler);
+    message.removeEventListener('click', alertClickHandler);
   };
-  message.addEventListener('click', (evt) => {
-    if (evt.target.tagName !== 'DIV' && evt.target.tagName !== 'H2'){
-      closeMessage();
-    }
-  });
   function documentKeydownHandler(evt) {
     if (evt.key === 'Escape') {
+      closeMessage();
+    }
+  }
+  function alertClickHandler(evt) {
+    if (evt.target.tagName !== 'DIV' && evt.target.tagName !== 'H2'){
       closeMessage();
     }
   }
@@ -62,17 +65,19 @@ const showLoadSuccess = () => {
   const message = successTemplate.cloneNode(true);
   body.appendChild(message);
   document.addEventListener('keydown', documentKeydownHandler);
+  message.addEventListener('click', alertClickHandler);
   const closeMessage = () => {
     message.remove();
     document.removeEventListener('keydown', documentKeydownHandler);
+    message.removeEventListener('click', alertClickHandler);
   };
-  message.addEventListener('click', (evt) => {
-    if (evt.target.tagName !== 'DIV' && evt.target.tagName !== 'H2'){
-      closeMessage();
-    }
-  });
   function documentKeydownHandler(evt) {
     if (evt.key === 'Escape') {
+      closeMessage();
+    }
+  }
+  function alertClickHandler(evt) {
+    if (evt.target.tagName !== 'DIV' && evt.target.tagName !== 'H2'){
       closeMessage();
     }
   }
@@ -100,11 +105,12 @@ const renderImageEditor = () => {
   textDescriptionInput.addEventListener('keydown', fieldKeydownHandler);
   closeButton.addEventListener('click', closeButtonClickHandler);
   document.addEventListener('keydown', escHandler);
+  imgUploadForm.addEventListener('submit', formSubmitHandler);
   enableEffectPreview();
   enableScaleChanger();
 };
 
-imgUploadForm.addEventListener('submit', (evt) => {
+function formSubmitHandler(evt) {
   evt.preventDefault();
   if (pristine.validate()) {
     blockSubmitButton();
@@ -124,7 +130,7 @@ imgUploadForm.addEventListener('submit', (evt) => {
       new FormData(imgUploadForm)
     );
   }
-});
+}
 
 uploadFile.addEventListener('change', (evt) => {
   evt.preventDefault();

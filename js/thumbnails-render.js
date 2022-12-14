@@ -47,6 +47,17 @@ const clearThumbnails = () => {
   }
 };
 
+const thumbnailsClickHandler = (evt) => {
+  const thumbnail = evt.target.closest('a');
+  if (!thumbnail) {
+    return;
+  }
+  if (!thumbnailsBlock.contains(thumbnail)) {
+    return;
+  }
+  renderBigPicture(thumbnailDict.get(thumbnail));
+};
+
 const renderThumbnails = (descriptions) => {
   clearThumbnails();
   const filter = imgFilters
@@ -60,18 +71,8 @@ const renderThumbnails = (descriptions) => {
       thumbnailsFragment.appendChild(thumbnail);
     });
   thumbnailsBlock.appendChild(thumbnailsFragment);
+  thumbnailsBlock.addEventListener('click', thumbnailsClickHandler);
 };
-
-thumbnailsBlock.addEventListener('click', (evt) => {
-  const thumbnail = evt.target.closest('a');
-  if (!thumbnail) {
-    return;
-  }
-  if (!thumbnailsBlock.contains(thumbnail)) {
-    return;
-  }
-  renderBigPicture(thumbnailDict.get(thumbnail));
-});
 
 const renderLoadError = (message) => {
   const error = document.createElement('div');
