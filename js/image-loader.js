@@ -45,9 +45,9 @@ const showLoadError = () => {
   document.addEventListener('keydown', documentKeydownHandler);
   message.addEventListener('click', alertClickHandler);
   const closeMessage = () => {
+    message.removeEventListener('click', alertClickHandler);
     message.remove();
     document.removeEventListener('keydown', documentKeydownHandler);
-    message.removeEventListener('click', alertClickHandler);
   };
   function documentKeydownHandler(evt) {
     if (evt.key === 'Escape') {
@@ -67,9 +67,9 @@ const showLoadSuccess = () => {
   document.addEventListener('keydown', documentKeydownHandler);
   message.addEventListener('click', alertClickHandler);
   const closeMessage = () => {
+    message.removeEventListener('click', alertClickHandler);
     message.remove();
     document.removeEventListener('keydown', documentKeydownHandler);
-    message.removeEventListener('click', alertClickHandler);
   };
   function documentKeydownHandler(evt) {
     if (evt.key === 'Escape') {
