@@ -15,7 +15,7 @@ const commentsCount = picture.querySelector('.comments-count');
 const closeButton = picture.querySelector('.big-picture__cancel');
 
 let shownCommentsCount = 0;
-let loaderListener = null;
+let loaderClickHandler = null;
 
 const prepareComment = (commentInfo) => {
   const comment = document.createElement('li');
@@ -62,24 +62,24 @@ const fillModal = (photoInfo) => {
 const closeBigPicture = () => {
   closeModal(pictureBlock, body);
   shownCommentsCount = 0;
-  commentsLoader.removeEventListener('click', loaderListener);
-  closeButton.removeEventListener('click', closeButtonListener);
-  document.removeEventListener('keydown', escListener);
+  commentsLoader.removeEventListener('click', loaderClickHandler);
+  closeButton.removeEventListener('click', closeButtonClickHandler);
+  document.removeEventListener('keydown', escHandler);
 };
 
-function escListener(evt) {
+function escHandler(evt) {
   if (evt.key === 'Escape') {
     closeBigPicture();
   }
 }
 
-function closeButtonListener(evt) {
+function closeButtonClickHandler(evt) {
   evt.preventDefault();
   closeBigPicture();
 }
 
 const renderBigPicture = (photoInfo) => {
-  loaderListener = (evt) => {
+  loaderClickHandler = (evt) => {
     evt.preventDefault();
     showNComments(COMMENTS_PER_LOAD, photoInfo.comments);
   };
@@ -87,9 +87,9 @@ const renderBigPicture = (photoInfo) => {
   openModal(pictureBlock, body);
   fillModal(photoInfo);
 
-  commentsLoader.addEventListener('click', loaderListener);
-  closeButton.addEventListener('click', closeButtonListener);
-  document.addEventListener('keydown', escListener);
+  commentsLoader.addEventListener('click', loaderClickHandler);
+  closeButton.addEventListener('click', closeButtonClickHandler);
+  document.addEventListener('keydown', escHandler);
 };
 
 export{renderBigPicture};

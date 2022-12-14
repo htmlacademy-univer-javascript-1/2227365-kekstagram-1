@@ -1,10 +1,35 @@
-import { changeEffect, createEffectSlider, sliderConnector } from './effect-level-slider.js';
-
 const INITIAL_SCALE_VALUE = 1.0;
 const MIN_SCALE_VALUE = 0.25;
 const MAX_SCALE_VALUE = 1.0;
 const SCALE_CHANGE_STEP = 0.25;
 const INITIAL_EFFECT = 'none';
+const EFFECT_DICT = {
+  chrome: {
+    filter: 'grayscale',
+    range: {min: 0, max: 1.0},
+    step: 0.1,
+    measurementUnit: ''},
+  sepia: {
+    filter: 'sepia',
+    range: {min: 0, max: 1.0},
+    step: 0.1,
+    measurementUnit: ''},
+  marvin: {
+    filter: 'invert',
+    range: {min: 0, max: 100},
+    step: 1,
+    measurementUnit: '%'},
+  phobos: {
+    filter: 'blur',
+    range: {min: 0, max: 3.0},
+    step: 0.1,
+    measurementUnit: 'px'},
+  heat: {
+    filter: 'brightness',
+    range: {min: 1, max: 3.0},
+    step: 0.1,
+    measurementUnit: ''}
+};
 
 const imgUploadForm = document.querySelector('.img-upload__form');
 const picture = imgUploadForm.querySelector('.img-upload__preview img');
@@ -22,6 +47,47 @@ const effectLevelSlider = imgUploadForm.querySelector('.effect-level__slider');
 const effectLevelValue = imgUploadForm.querySelector('.effect-level__value');
 let currentEffect = INITIAL_EFFECT;
 
+const createEffectSlider = () => {
+  noUiSlider.create(effectLevelSlider, {
+    range: {
+      min: 0,
+      max: 1.0,
+    },
+    start: 1.0,
+    step: 0.1,
+    connect: 'lower',
+  });
+};
+
+const sliderUpdateHandler = () => {
+  if (currentEffect === 'none') {
+    picture.style.filter = '';
+    return;
+  }
+  const effect = EFFECT_DICT[currentEffect];
+  picture.style.filter = `${effect.filter}(${effectLevelSlider.noUiSlider.get()}${effect.measurementUnit})`;
+  effectLevelValue.value = `${effectLevelSlider.noUiSlider.get()}${effect.measurementUnit}`;
+};
+
+const changeEffect = (effect) => {
+  if ((currentEffect === 'none') !== (effectLevelSlider.classList.contains('hidden'))){
+    effectLevelSlider.classList.toggle('hidden');
+  }
+  if (currentEffect !== 'none') {
+    const effectObj = EFFECT_DICT[effect];
+    effectLevelSlider.noUiSlider.updateOptions({
+      range: {
+        min: effectObj.range.min,
+        max: effectObj.range.max,
+      },
+      start: effectObj.range.max,
+      step: effectObj.step
+    });
+  }
+  else {
+    picture.style.filter = '';
+  }
+};
 
 const disableButtonsIfNeeded = () => {
   if ((scaleControl.scale === MIN_SCALE_VALUE) !== scaleControl.smaller.hasAttribute('disabled')) {
@@ -32,7 +98,7 @@ const disableButtonsIfNeeded = () => {
   }
 };
 
-const scaleControlListener = (evt) => {
+const scaleControlClickHandler = (evt) => {
   evt.preventDefault();
   const target = evt.target;
   if (target.tagName !== 'BUTTON') {
@@ -54,15 +120,15 @@ const scaleControlListener = (evt) => {
 const enableScaleChanger = () => {
   scaleControl.text.value = `${Math.round(scaleControl.scale * 100)}%`;
   picture.style.transform = `scale(${scaleControl.scale})`;
-  scaleControl.block.addEventListener('click', scaleControlListener);
+  scaleControl.block.addEventListener('click', scaleControlClickHandler);
   disableButtonsIfNeeded();
 };
 
 const disnableScaleChanger = () => {
-  scaleControl.block.removeEventListener('click', scaleControlListener);
+  scaleControl.block.removeEventListener('click', scaleControlClickHandler);
 };
 
-const effectRadiosListener = () => {
+const effectRadiosClickHandler = () => {
   picture.classList.remove(`effects__preview--${currentEffect}`);
   buttons.forEach((button) => {
     if (button.checked) {
@@ -74,11 +140,11 @@ const effectRadiosListener = () => {
 };
 
 const enableEffectPreview = () => {
-  effectsList.addEventListener('click', effectRadiosListener);
+  effectsList.addEventListener('click', effectRadiosClickHandler);
   createEffectSlider();
   changeEffect(currentEffect);
   effectLevelSlider.noUiSlider.set(parseFloat(effectLevelValue.value));
-  effectLevelSlider.noUiSlider.on('update', sliderConnector);
+  effectLevelSlider.noUiSlider.on('update', sliderUpdateHandler);
   if (currentEffect === 'none') {
     effectLevelSlider.classList.add('hidden');
   }
@@ -86,7 +152,7 @@ const enableEffectPreview = () => {
 
 const disableEffectPreview = () => {
   picture.classList.remove(`effects__preview--${currentEffect}`);
-  effectsList.removeEventListener('click', effectRadiosListener);
+  effectsList.removeEventListener('click', effectRadiosClickHandler);
   effectLevelSlider.noUiSlider.destroy();
 };
 
@@ -101,9 +167,6 @@ export {
   disnableScaleChanger,
   enableEffectPreview,
   disableEffectPreview,
-  effectLevelSlider,
-  effectLevelValue,
   picture,
-  currentEffect,
   resetEffect
 };
