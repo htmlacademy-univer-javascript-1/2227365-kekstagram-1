@@ -11,22 +11,18 @@ const imgFilters = document.querySelector('.img-filters');
 const compareByComments = (photoA, photoB) => photoB.comments.length - photoA.comments.length;
 
 const filters = {
-  filterDefault: (photos) => photos,
-  filterRandom: (photos) => {
+  'filter-default': (photos) => photos,
+  'filter-random': (photos) => {
     const result = [];
-    let numbers = [];
-    if (photos.length >= 10) {
-      numbers = getNonRepeatingRandoms(0, photos.length - 1, RANDOM_PHOTOS_COUNT, []);
-    }
-    else {
-      numbers = getNonRepeatingRandoms(0, photos.length - 1, photos.length, []);
-    }
+    const numbers = (photos.length >= RANDOM_PHOTOS_COUNT)
+      ? getNonRepeatingRandoms(0, photos.length - 1, RANDOM_PHOTOS_COUNT, [])
+      : getNonRepeatingRandoms(0, photos.length - 1, photos.length, []);
     numbers.forEach((number) => {
       result.push(photos[number]);
     });
     return result;
   },
-  filterDiscussed: (photos) => photos.sort(compareByComments)
+  'filter-discussed': (photos) => photos.sort(compareByComments)
 };
 
 const createThumbnail = (photoInfo) => {
@@ -51,23 +47,7 @@ const clearThumbnails = () => {
   }
 };
 
-const renderThumbnails = (descriptions) => {
-  clearThumbnails();
-  const filter = imgFilters
-    .querySelector('.img-filters__button--active')
-    .id
-    .replace(/-([a-z])/g, (g) => g[1].toUpperCase());
-  const thumbnailsFragment = document.createDocumentFragment();
-  filters[filter](descriptions.slice())
-    .forEach((description) => {
-      const thumbnail = createThumbnail(description);
-      thumbnailDict.set(thumbnail, description);
-      thumbnailsFragment.appendChild(thumbnail);
-    });
-  thumbnailsBlock.appendChild(thumbnailsFragment);
-};
-
-thumbnailsBlock.addEventListener('click', (evt) => {
+const thumbnailsClickHandler = (evt) => {
   const thumbnail = evt.target.closest('a');
   if (!thumbnail) {
     return;
@@ -76,7 +56,23 @@ thumbnailsBlock.addEventListener('click', (evt) => {
     return;
   }
   renderBigPicture(thumbnailDict.get(thumbnail));
-});
+};
+
+const renderThumbnails = (descriptions) => {
+  clearThumbnails();
+  const filter = imgFilters
+    .querySelector('.img-filters__button--active')
+    .id;
+  const thumbnailsFragment = document.createDocumentFragment();
+  filters[filter](descriptions.slice())
+    .forEach((description) => {
+      const thumbnail = createThumbnail(description);
+      thumbnailDict.set(thumbnail, description);
+      thumbnailsFragment.appendChild(thumbnail);
+    });
+  thumbnailsBlock.appendChild(thumbnailsFragment);
+  thumbnailsBlock.addEventListener('click', thumbnailsClickHandler);
+};
 
 const renderLoadError = (message) => {
   const error = document.createElement('div');

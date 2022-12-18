@@ -1,7 +1,9 @@
 import {openModal, closeModal} from './util.js';
 import {pristine} from './loader-validation.js';
 import { sendData } from './api.js';
-import { enableScaleChanger, disnableScaleChanger, enableEffectPreview, disableEffectPreview, resetEffect} from './photo-editor.js';
+import { picture, enableScaleChanger, disnableScaleChanger, enableEffectPreview, disableEffectPreview, resetEffect} from './photo-editor.js';
+
+const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 
 const body = document.querySelector('body');
 const imgUploadForm = document.querySelector('.img-upload__form');
@@ -20,10 +22,11 @@ const successTemplate = document.querySelector('#success')
 
 const closeOverlay = () => {
   closeModal(imgUploadOverlay, body);
-  closeButton.removeEventListener('click', closeButtonListener);
-  document.removeEventListener('keydown', escListener);
-  textHashtagsInput.removeEventListener('keydown', propagationStopper);
-  textDescriptionInput.removeEventListener('keydown', propagationStopper);
+  closeButton.removeEventListener('click', closeButtonClickHandler);
+  document.removeEventListener('keydown', escHandler);
+  textHashtagsInput.removeEventListener('keydown', fieldKeydownHandler);
+  textDescriptionInput.removeEventListener('keydown', fieldKeydownHandler);
+  imgUploadForm.removeEventListener('submit', formSubmitHandler);
   disableEffectPreview();
   disnableScaleChanger();
 };
@@ -33,24 +36,26 @@ const blockSubmitButton = () => {
 };
 
 const unBlockSubmitButton = () => {
-  uploadSubmitButton.removeAttribute('disabled', 'disabled');
+  uploadSubmitButton.removeAttribute('disabled');
 };
 
 const showLoadError = () => {
   const message = errorTemplate.cloneNode(true);
   body.appendChild(message);
-  document.addEventListener('keydown', closeByEsc);
+  document.addEventListener('keydown', documentKeydownHandler);
+  message.addEventListener('click', alertClickHandler);
   const closeMessage = () => {
+    message.removeEventListener('click', alertClickHandler);
     message.remove();
-    document.removeEventListener('keydown', closeByEsc);
+    document.removeEventListener('keydown', documentKeydownHandler);
   };
-  message.addEventListener('click', (evt) => {
-    if (evt.target.tagName !== 'DIV' && evt.target.tagName !== 'H2'){
+  function documentKeydownHandler(evt) {
+    if (evt.key === 'Escape') {
       closeMessage();
     }
-  });
-  function closeByEsc(evt) {
-    if (evt.key === 'Escape') {
+  }
+  function alertClickHandler(evt) {
+    if (evt.target.tagName !== 'DIV' && evt.target.tagName !== 'H2'){
       closeMessage();
     }
   }
@@ -59,33 +64,35 @@ const showLoadError = () => {
 const showLoadSuccess = () => {
   const message = successTemplate.cloneNode(true);
   body.appendChild(message);
-  document.addEventListener('keydown', closeByEsc);
+  document.addEventListener('keydown', documentKeydownHandler);
+  message.addEventListener('click', alertClickHandler);
   const closeMessage = () => {
+    message.removeEventListener('click', alertClickHandler);
     message.remove();
-    document.removeEventListener('keydown', closeByEsc);
+    document.removeEventListener('keydown', documentKeydownHandler);
   };
-  message.addEventListener('click', (evt) => {
-    if (evt.target.tagName !== 'DIV' && evt.target.tagName !== 'H2'){
+  function documentKeydownHandler(evt) {
+    if (evt.key === 'Escape') {
       closeMessage();
     }
-  });
-  function closeByEsc(evt) {
-    if (evt.key === 'Escape') {
+  }
+  function alertClickHandler(evt) {
+    if (evt.target.tagName !== 'DIV' && evt.target.tagName !== 'H2'){
       closeMessage();
     }
   }
 };
 
-function propagationStopper(evt) {
+function fieldKeydownHandler(evt) {
   evt.stopPropagation();
 }
 
-function closeButtonListener() {
+function closeButtonClickHandler() {
   closeOverlay();
   resetEffect();
 }
 
-function escListener(evt) {
+function escHandler(evt) {
   if (evt.key === 'Escape') {
     closeOverlay();
     resetEffect();
@@ -94,15 +101,16 @@ function escListener(evt) {
 
 const renderImageEditor = () => {
   openModal(imgUploadOverlay, body);
-  textHashtagsInput.addEventListener('keydown', propagationStopper);
-  textDescriptionInput.addEventListener('keydown', propagationStopper);
-  closeButton.addEventListener('click', closeButtonListener);
-  document.addEventListener('keydown', escListener);
+  textHashtagsInput.addEventListener('keydown', fieldKeydownHandler);
+  textDescriptionInput.addEventListener('keydown', fieldKeydownHandler);
+  closeButton.addEventListener('click', closeButtonClickHandler);
+  document.addEventListener('keydown', escHandler);
+  imgUploadForm.addEventListener('submit', formSubmitHandler);
   enableEffectPreview();
   enableScaleChanger();
 };
 
-imgUploadForm.addEventListener('submit', (evt) => {
+function formSubmitHandler(evt) {
   evt.preventDefault();
   if (pristine.validate()) {
     blockSubmitButton();
@@ -122,9 +130,17 @@ imgUploadForm.addEventListener('submit', (evt) => {
       new FormData(imgUploadForm)
     );
   }
-});
+}
 
 uploadFile.addEventListener('change', (evt) => {
   evt.preventDefault();
-  renderImageEditor();
+  const file = uploadFile.files[0];
+  const fileName = file.name.toLowerCase();
+  if (FILE_TYPES.some((type) => fileName.endsWith(type))) {
+    picture.src = URL.createObjectURL(file);
+    renderImageEditor();
+  }
+  else {
+    showLoadError();
+  }
 });
